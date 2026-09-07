@@ -64,11 +64,11 @@ function buildParticles(){
       const a=source[i], b=dest[Math.floor(i*dest.length/count)]
       const sx=w/2+(a.x-350)*1.15, sy=h/2+(a.y-175)*1.15
       const tx=w/2+(b.x-550), ty=h/2-15+(b.y-120)
-      particles.push({x:sx,y:sy,sx,sy,tx,ty,vx:(Math.random()-.5)*18,vy:(Math.random()-.5)*18,size:Math.random()*2+.7,delay:Math.random()*.28})
+      particles.push({x:sx,y:sy,sx,sy,tx,ty,vx:(Math.random()-.5)*18,vy:(Math.random()-.5)*18,size:Math.random()*2+.7,delay:Math.random()*.18})
     }
     const start=performance.now()
     function draw(now:number){
-      const p=Math.min((now-start)/1500,1)
+      const p=Math.min((now-start)/1250,1)
       ctx.clearRect(0,0,w,h)
       particles.forEach(q=>{
         const local=Math.max(0,Math.min(1,(p-q.delay)/.72)), e=1-Math.pow(1-local,3)
@@ -85,11 +85,13 @@ function buildParticles(){
 
 onMounted(()=>{
   started.value=true
-  setTimeout(()=>rotate.value=true,2600)
-  setTimeout(()=>crash.value=true,4300)
-  setTimeout(()=>{ dissolving.value=true; buildParticles() },4850)
-  setTimeout(()=>{},6500)
-  setTimeout(finish,9500)
+  // 侧面车先完整驶入，随后彻底离场。正面车不与它同屏。
+  setTimeout(()=>rotate.value=true,2200)
+  // 正面视角锁定后立即冲屏，不再停顿。
+  setTimeout(()=>crash.value=true,3450)
+  // 冲屏尾段直接把前车轮廓拆成粒子并变成 AutoInsight。
+  setTimeout(()=>{ dissolving.value=true; buildParticles() },4000)
+  setTimeout(finish,8500)
 })
 
 onBeforeUnmount(()=>cancelAnimationFrame(raf))
@@ -101,17 +103,17 @@ onBeforeUnmount(()=>cancelAnimationFrame(raf))
 .car{position:absolute;left:50%;top:50%;object-fit:contain;transform-origin:center;will-change:transform,opacity,filter}
 .side{width:min(75vw,1000px);height:340px;transform:translate(-150vw,-50%)}
 .side.drive{animation:drive 2.2s cubic-bezier(.2,.8,.2,1) forwards}
-.side.disappear{animation:sideOut .55s ease-in forwards}
+.side.disappear{animation:sideOut .5s cubic-bezier(.7,0,1,.45) forwards}
 .front{width:min(80vw,1100px);height:550px;opacity:0;transform:translate(-50%,-50%) rotateY(-90deg) scale(.85)}
 .front.enter{animation:cameraTurn 1.25s cubic-bezier(.2,.7,.1,1) forwards;opacity:1}
-.front.rush{animation:rush .7s cubic-bezier(.55,0,1,.35) forwards}
-.front.dissolving{opacity:0;transition:opacity .16s}
+.front.rush{animation:rush .55s cubic-bezier(.55,0,1,.35) forwards}
+.front.dissolving{opacity:0;transition:opacity .12s}
 @keyframes drive{to{transform:translate(-50%,-50%)}}
-@keyframes sideOut{to{opacity:0;transform:translate(-50%,-50%) rotateY(82deg) scale(.9)}}
-@keyframes cameraTurn{to{transform:translate(-50%,-50%) rotateY(0) scale(1)}}
-@keyframes rush{to{transform:translate(-50%,-50%) scale(7);filter:blur(16px)}}
+@keyframes sideOut{0%{opacity:1;transform:translate(-50%,-50%) rotateY(0) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) rotateY(90deg) scale(.82)}}
+@keyframes cameraTurn{0%{opacity:0;transform:translate(-50%,-50%) rotateY(-90deg) scale(.9)}100%{opacity:1;transform:translate(-50%,-50%) rotateY(0) scale(1)}}
+@keyframes rush{0%{transform:translate(-50%,-50%) scale(1);filter:blur(0)}35%{transform:translate(-50%,-50%) scale(2.1);filter:blur(1px)}100%{transform:translate(-50%,-50%) scale(8);filter:blur(18px)}}
 .particle-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}.flash.active{animation:flash .42s ease-out forwards}@keyframes flash{0%{opacity:0}45%{opacity:1}100%{opacity:0}}
+.flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}.flash.active{animation:flash .34s ease-out forwards}@keyframes flash{0%{opacity:0}40%{opacity:1}100%{opacity:0}}
 .brand{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;opacity:0;pointer-events:none}.brand.show{animation:brand 1s forwards}@keyframes brand{to{opacity:1}}
 .brand strong{font:900 100px Arial;letter-spacing:-4px}.brand span{margin-top:25px;color:#666;letter-spacing:8px}
 button{position:absolute;right:30px;bottom:30px;background:none;border:0;color:#888;z-index:5}
