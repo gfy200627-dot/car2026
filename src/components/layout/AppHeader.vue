@@ -1,32 +1,34 @@
 <template>
   <header class="app-header">
     <div class="app-header__inner">
-      <div class="app-header__brand" @click="$router.push('/dashboard')">
+      <button class="app-header__brand" type="button" @click="router.push('/dashboard')">
         <span class="app-header__logo">AI</span>
-        <span class="app-header__name">
-          <b>AutoInsight</b>
+        <span class="app-header__brand-copy">
+          <strong>AUTOINSIGHT</strong>
+          <small>汽车行业数据智能平台</small>
         </span>
-      </div>
+      </button>
 
-      <nav class="app-header__nav">
+      <nav class="app-header__nav" aria-label="主导航">
         <button
           v-for="item in menus"
           :key="item.path"
           type="button"
           class="app-header__nav-item"
           :class="{ 'is-active': isActive(item.path) }"
-          @click="$router.push(item.path)"
+          @click="router.push(item.path)"
         >
           {{ item.title }}
         </button>
       </nav>
 
       <div class="app-header__actions">
+        <span class="app-header__meta">DATA / 2026</span>
         <el-popover placement="bottom-end" :width="340" trigger="click" popper-class="notice-popper">
           <template #reference>
-            <button class="app-header__icon-btn" type="button">
+            <button class="app-header__icon-btn" type="button" aria-label="通知">
               <el-badge :value="appStore.unreadCount" :hidden="!appStore.unreadCount" :max="9">
-                <el-icon :size="16"><Bell /></el-icon>
+                <el-icon :size="15"><Bell /></el-icon>
               </el-badge>
             </button>
           </template>
@@ -52,27 +54,14 @@
           <button class="app-header__user" type="button">
             <span class="app-header__avatar">{{ userStore.avatarText }}</span>
             <span class="app-header__username">{{ userStore.nickname }}</span>
-            <StatusTag :status="userStore.role" :dot="false" />
             <el-icon :size="12"><ArrowDown /></el-icon>
           </button>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item command="profile">
-                <el-icon><User /></el-icon>
-                <span>个人中心</span>
-              </el-dropdown-item>
-              <el-dropdown-item v-if="userStore.isAdmin" command="admin">
-                <el-icon><Setting /></el-icon>
-                <span>管理后台</span>
-              </el-dropdown-item>
-              <el-dropdown-item v-if="userStore.role === 'sales'" command="adminOrders">
-                <el-icon><Tickets /></el-icon>
-                <span>订单管理</span>
-              </el-dropdown-item>
-              <el-dropdown-item command="logout" divided>
-                <el-icon><SwitchButton /></el-icon>
-                <span>退出登录</span>
-              </el-dropdown-item>
+              <el-dropdown-item command="profile"><el-icon><User /></el-icon><span>个人中心</span></el-dropdown-item>
+              <el-dropdown-item v-if="userStore.isAdmin" command="admin"><el-icon><Setting /></el-icon><span>管理后台</span></el-dropdown-item>
+              <el-dropdown-item v-if="userStore.role === 'sales'" command="adminOrders"><el-icon><Tickets /></el-icon><span>订单管理</span></el-dropdown-item>
+              <el-dropdown-item command="logout" divided><el-icon><SwitchButton /></el-icon><span>退出登录</span></el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -86,7 +75,6 @@ import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ArrowDown, Bell, Setting, SwitchButton, Tickets, User } from '@element-plus/icons-vue'
 import { ElMessageBox } from 'element-plus'
-import StatusTag from '@/components/common/StatusTag.vue'
 import { useAppStore } from '@/stores/app'
 import { useUserStore } from '@/stores/user'
 import { routes } from '@/router'
@@ -96,7 +84,6 @@ const route = useRoute()
 const userStore = useUserStore()
 const appStore = useAppStore()
 
-/** 主导航：来自路由表中 MainLayout 的子路由，并按角色过滤 */
 const menus = computed(() => {
   const main = routes.find((r) => r.path === '/')
   const children = (main?.children ?? []) as { path: string; meta?: Record<string, unknown> }[]
@@ -107,10 +94,7 @@ const menus = computed(() => {
       const roles = meta.roles as string[] | undefined
       return userStore.hasRole(roles as never)
     })
-    .map((c) => ({
-      path: `/${c.path}`,
-      title: String(c.meta?.title ?? c.path)
-    }))
+    .map((c) => ({ path: `/${c.path}`, title: String(c.meta?.title ?? c.path) }))
 })
 
 function isActive(path: string): boolean {
@@ -126,12 +110,10 @@ function onCommand(command: string): void {
       type: 'warning',
       confirmButtonText: '退出',
       cancelButtonText: '取消'
-    })
-      .then(() => {
-        userStore.logout()
-        void router.push('/login')
-      })
-      .catch(() => undefined)
+    }).then(() => {
+      userStore.logout()
+      void router.push('/login')
+    }).catch(() => undefined)
   }
 }
 </script>
@@ -139,57 +121,65 @@ function onCommand(command: string): void {
 <style scoped lang="scss">
 .app-header {
   position: sticky;
-  top: 12px;
+  top: 0;
   z-index: var(--ai-z-header);
   height: var(--ai-header-height);
-  margin: 0 auto;
-  padding: 0 var(--ai-space-6);
-  background: transparent;
+  padding: 0 48px;
+  background: var(--ai-bg-panel);
+  border-bottom: 1px solid var(--ai-border);
 }
 
 .app-header__inner {
   display: flex;
   align-items: center;
-  gap: var(--ai-space-5);
+  gap: 28px;
+  width: 100%;
+  max-width: 1344px;
   height: 100%;
-  padding: 0 var(--ai-space-5);
-  max-width: var(--ai-content-max);
   margin: 0 auto;
-  border: 1px solid var(--ai-border);
-  border-radius: var(--ai-radius-lg);
-  background: rgba(12, 16, 24, 0.78);
-  backdrop-filter: blur(18px);
-  box-shadow: var(--ai-shadow-md), var(--ai-shadow-inset);
 }
 
 .app-header__brand {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  flex: 0 0 auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ai-text-1);
   cursor: pointer;
-  flex-shrink: 0;
+  text-align: left;
 }
 
 .app-header__logo {
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #f8fafc, #9aa6b8 48%, #d4af37);
-  color: #07090d;
-  font-size: 13px;
+  width: 36px;
+  height: 36px;
+  background: var(--ai-brand);
+  color: var(--ai-text-inverse);
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  box-shadow: 0 10px 28px rgba(212, 175, 55, 0.16);
+  letter-spacing: 0.05em;
 }
 
-.app-header__name {
+.app-header__brand-copy {
   display: flex;
   flex-direction: column;
-  line-height: 1.2;
+  gap: 2px;
+  line-height: 1.1;
+}
 
-  b { font-size: 16px; font-weight: 650; color: var(--ai-text-1); letter-spacing: 0; }
+.app-header__brand-copy strong {
+  font-size: 15px;
+  letter-spacing: 0.02em;
+}
+
+.app-header__brand-copy small {
+  color: var(--ai-text-4);
+  font-size: 10px;
+  font-weight: 400;
 }
 
 .app-header__nav {
@@ -200,46 +190,47 @@ function onCommand(command: string): void {
   min-width: 0;
   overflow-x: auto;
   scrollbar-width: none;
-
-  &::-webkit-scrollbar { display: none; }
 }
+
+.app-header__nav::-webkit-scrollbar { display: none; }
 
 .app-header__nav-item {
   position: relative;
-  padding: 9px 14px;
+  flex: 0 0 auto;
+  padding: 10px 14px;
   border: 0;
   background: transparent;
-  color: var(--ai-text-2);
-  font-size: var(--ai-fs-sm);
-  white-space: nowrap;
+  color: var(--ai-text-3);
+  font-size: 13px;
   cursor: pointer;
-  border-radius: var(--ai-radius-sm);
-  transition: color var(--ai-duration-base) var(--ai-ease), background var(--ai-duration-base) var(--ai-ease);
+  transition: color var(--ai-duration-base) var(--ai-ease);
+}
 
-  &:hover { color: var(--ai-text-1); background: var(--ai-bg-subtle); }
+.app-header__nav-item:hover,
+.app-header__nav-item.is-active { color: var(--ai-text-1); }
 
-  &.is-active {
-    color: #f4f7fb;
-    background: var(--ai-brand-ghost);
-
-    &::after {
-      content: '';
-      position: absolute;
-      left: 16px;
-      right: 16px;
-      bottom: 5px;
-      height: 2px;
-      border-radius: 2px;
-      background: linear-gradient(90deg, var(--ai-brand), var(--ai-nev));
-    }
-  }
+.app-header__nav-item.is-active::after {
+  content: '';
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 4px;
+  height: 2px;
+  background: var(--ai-brand);
 }
 
 .app-header__actions {
   display: flex;
   align-items: center;
-  gap: var(--ai-space-3);
-  flex-shrink: 0;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+
+.app-header__meta {
+  color: var(--ai-text-4);
+  font-family: var(--ai-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
 }
 
 .app-header__icon-btn {
@@ -247,29 +238,21 @@ function onCommand(command: string): void {
   place-items: center;
   width: 32px;
   height: 32px;
-  border-radius: var(--ai-radius-sm);
   border: 1px solid var(--ai-border);
-  background: transparent;
+  background: var(--ai-bg-panel);
   color: var(--ai-text-2);
   cursor: pointer;
-  transition: all var(--ai-duration-base) var(--ai-ease);
-
-  &:hover { color: var(--ai-text-1); border-color: var(--ai-border-strong); background: var(--ai-bg-subtle); }
 }
 
 .app-header__user {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 4px 8px 4px 4px;
-  border-radius: var(--ai-radius-pill);
   border: 1px solid var(--ai-border);
-  background: transparent;
-  color: var(--ai-text-1);
+  background: var(--ai-bg-panel);
+  color: var(--ai-text-2);
   cursor: pointer;
-  transition: all var(--ai-duration-base) var(--ai-ease);
-
-  &:hover { border-color: var(--ai-border-strong); background: var(--ai-bg-subtle); }
 }
 
 .app-header__avatar {
@@ -277,93 +260,52 @@ function onCommand(command: string): void {
   place-items: center;
   width: 24px;
   height: 24px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--ai-brand), var(--ai-purple));
-  color: #fff;
-  font-size: var(--ai-fs-xs);
+  background: var(--ai-brand);
+  color: var(--ai-text-inverse);
+  font-size: 10px;
   font-weight: 600;
 }
 
 .app-header__username {
-  font-size: var(--ai-fs-xs);
-  max-width: 90px;
+  max-width: 86px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: 12px;
 }
 
 @media (max-width: 1280px) {
-  .app-header { padding: 0 var(--ai-space-4); }
-  .app-header__inner { gap: var(--ai-space-4); padding: 0 var(--ai-space-4); }
+  .app-header { padding-inline: 24px; }
+  .app-header__inner { gap: 18px; }
+  .app-header__brand-copy small,
+  .app-header__meta { display: none; }
 }
 
-@media (max-width: 1024px) {
-  .app-header__name { display: none; }
+@media (max-width: 900px) {
+  .app-header { padding-inline: 16px; }
+  .app-header__brand-copy { display: none; }
+  .app-header__nav-item { padding-inline: 10px; }
+  .app-header__username { display: none; }
 }
 </style>
 
 <style lang="scss">
-/* 通知弹层（非 scoped，作用于 popper） */
 .notice__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding-bottom: 10px;
-  margin-bottom: 6px;
   border-bottom: 1px solid var(--ai-border);
-  font-size: var(--ai-fs-sm);
+  font-size: 13px;
   color: var(--ai-text-1);
   font-weight: 600;
 }
-
-.notice__list {
-  max-height: 340px;
-  overflow-y: auto;
-}
-
-.notice__item {
-  display: flex;
-  gap: 10px;
-  padding: 10px 4px;
-  border-bottom: 1px solid var(--ai-border);
-
-  &.is-read { opacity: 0.55; }
-
-  &:last-child { border-bottom: 0; }
-}
-
-.notice__dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  margin-top: 6px;
-  flex-shrink: 0;
-
-  &.is-success { background: var(--ai-nev); }
-  &.is-info { background: var(--ai-brand); }
-  &.is-warning { background: var(--ai-warn); }
-  &.is-danger { background: var(--ai-danger); }
-}
-
-.notice__content { flex: 1; min-width: 0; }
-
-.notice__title {
-  font-size: var(--ai-fs-xs);
-  color: var(--ai-text-1);
-  font-weight: 500;
-}
-
-.notice__desc {
-  margin-top: 3px;
-  font-size: var(--ai-fs-mini);
-  color: var(--ai-text-3);
-  line-height: 1.5;
-}
-
-.notice__time {
-  display: block;
-  margin-top: 4px;
-  font-size: 10px;
-  color: var(--ai-text-4);
-}
+.notice__list { max-height: 340px; overflow-y: auto; }
+.notice__item { display: flex; gap: 10px; padding: 10px 4px; border-bottom: 1px solid var(--ai-border); }
+.notice__item.is-read { opacity: 0.55; }
+.notice__dot { width: 6px; height: 6px; margin-top: 6px; flex: 0 0 auto; border-radius: 50%; background: var(--ai-text-3); }
+.notice__content { min-width: 0; flex: 1; }
+.notice__title { font-size: 12px; color: var(--ai-text-1); }
+.notice__desc { margin-top: 3px; font-size: 11px; line-height: 1.5; color: var(--ai-text-3); }
+.notice__time { display: block; margin-top: 4px; font-size: 10px; color: var(--ai-text-4); }
 </style>
