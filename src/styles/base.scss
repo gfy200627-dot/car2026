@@ -11,11 +11,17 @@
 html,
 body,
 #app {
-  height: 100%;
+  min-height: 100%;
+  width: 100%;
+}
+
+html {
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
+  min-width: 0;
   background: var(--ai-bg-base);
   color: var(--ai-text-1);
   font-family: var(--ai-font-sans);
@@ -59,7 +65,6 @@ button {
   letter-spacing: -0.01em;
 }
 
-/* 滚动条：细、克制 */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -75,13 +80,11 @@ button {
   background: rgba(255, 255, 255, 0.18);
 }
 
-/* 选中态 */
 ::selection {
   background: rgba(46, 124, 246, 0.32);
   color: #fff;
 }
 
-/* ---------- 动画 ---------- */
 @keyframes ai-fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -102,7 +105,6 @@ button {
 .fade-enter-active { animation: ai-fade-in var(--ai-duration-base) var(--ai-ease) both; }
 .fade-leave-active { animation: ai-fade-in var(--ai-duration-fast) var(--ai-ease) reverse both; }
 
-/* ---------- 工具类 ---------- */
 .ai-row { display: flex; align-items: center; }
 .ai-row--between { justify-content: space-between; }
 .ai-row--gap-2 { gap: var(--ai-space-2); }
@@ -114,7 +116,6 @@ button {
 .ai-text-1 { color: var(--ai-text-1); }
 .ai-text-2 { color: var(--ai-text-2); }
 .ai-text-3 { color: var(--ai-text-3); }
-
 .ai-up { color: var(--ai-up); }
 .ai-down { color: var(--ai-down); }
 
@@ -131,7 +132,6 @@ button {
   overflow: hidden;
 }
 
-/* 页面容器 */
 .ai-page {
   display: flex;
   flex-direction: column;
@@ -139,11 +139,11 @@ button {
   padding: var(--ai-space-5) var(--ai-space-6) var(--ai-space-10);
   max-width: var(--ai-content-max);
   width: 100%;
+  min-width: 0;
   margin: 0 auto;
   animation: ai-fade-up var(--ai-duration-slow) var(--ai-ease) both;
 }
 
-/* 章节标题 */
 .ai-section-title {
   font-size: var(--ai-fs-h3);
   font-weight: var(--ai-fw-semibold);
@@ -151,7 +151,6 @@ button {
   letter-spacing: 0.01em;
 }
 
-/* 细分割线 */
 .ai-divider {
   height: 1px;
   background: var(--ai-border);
@@ -159,11 +158,14 @@ button {
   margin: 0;
 }
 
-/* 响应式：平板 */
 @media (max-width: 1280px) {
   .ai-page { padding: var(--ai-space-4) var(--ai-space-5) var(--ai-space-8); }
 }
 
 @media (max-width: 992px) {
-  .ai-page { padding: var(--ai-space-4) var(--ai-space-4) var(--ai-space-8); }
+  .ai-page { padding: var(--ai-space-4); gap: var(--ai-space-4); }
+}
+
+@media (max-width: 768px) {
+  .ai-page { padding: var(--ai-space-3); gap: var(--ai-space-3); }
 }
