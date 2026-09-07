@@ -4,9 +4,7 @@
       <div>
         <h3 class="ai-panel__title">
           {{ title }}
-          <span v-if="mock" class="ai-tag ai-tag--mock">示例数据</span>
         </h3>
-        <p v-if="subtitle" class="ai-panel__subtitle">{{ subtitle }}</p>
       </div>
       <div class="chart-card__extra">
         <slot name="extra" />
@@ -74,3 +72,4 @@ const emit = defineEmits<{ (e: 'retry'): void }>()
   min-width: 0;
 }
 </style>
+
