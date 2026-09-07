@@ -1,16 +1,13 @@
 <template>
   <header class="app-header">
     <div class="app-header__inner">
-      <!-- 品牌标识 -->
       <div class="app-header__brand" @click="$router.push('/dashboard')">
         <span class="app-header__logo">AI</span>
         <span class="app-header__name">
           <b>AutoInsight</b>
-          <em>汽车行业数据智能分析与决策平台</em>
         </span>
       </div>
 
-      <!-- 主导航 -->
       <nav class="app-header__nav">
         <button
           v-for="item in menus"
@@ -24,10 +21,7 @@
         </button>
       </nav>
 
-      <!-- 右侧操作 -->
       <div class="app-header__actions">
-        <span class="app-header__env ai-tag ai-tag--mock">示例数据环境</span>
-
         <el-popover placement="bottom-end" :width="340" trigger="click" popper-class="notice-popper">
           <template #reference>
             <button class="app-header__icon-btn" type="button">
@@ -145,22 +139,27 @@ function onCommand(command: string): void {
 <style scoped lang="scss">
 .app-header {
   position: sticky;
-  top: 0;
+  top: 12px;
   z-index: var(--ai-z-header);
   height: var(--ai-header-height);
-  background: rgba(11, 15, 22, 0.86);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid var(--ai-border);
+  margin: 0 auto;
+  padding: 0 var(--ai-space-6);
+  background: transparent;
 }
 
 .app-header__inner {
   display: flex;
   align-items: center;
-  gap: var(--ai-space-6);
+  gap: var(--ai-space-5);
   height: 100%;
-  padding: 0 var(--ai-space-6);
+  padding: 0 var(--ai-space-5);
   max-width: var(--ai-content-max);
   margin: 0 auto;
+  border: 1px solid var(--ai-border);
+  border-radius: var(--ai-radius-lg);
+  background: rgba(12, 16, 24, 0.78);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--ai-shadow-md), var(--ai-shadow-inset);
 }
 
 .app-header__brand {
@@ -174,15 +173,15 @@ function onCommand(command: string): void {
 .app-header__logo {
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
   border-radius: 8px;
-  background: linear-gradient(135deg, var(--ai-brand), var(--ai-nev));
-  color: #fff;
+  background: linear-gradient(135deg, #f8fafc, #9aa6b8 48%, #d4af37);
+  color: #07090d;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.04em;
-  box-shadow: 0 6px 18px rgba(46, 124, 246, 0.28);
+  box-shadow: 0 10px 28px rgba(212, 175, 55, 0.16);
 }
 
 .app-header__name {
@@ -190,14 +189,13 @@ function onCommand(command: string): void {
   flex-direction: column;
   line-height: 1.2;
 
-  b { font-size: 15px; font-weight: 600; color: var(--ai-text-1); letter-spacing: 0.01em; }
-  em { font-style: normal; font-size: 10px; color: var(--ai-text-4); margin-top: 2px; }
+  b { font-size: 16px; font-weight: 650; color: var(--ai-text-1); letter-spacing: 0; }
 }
 
 .app-header__nav {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
   flex: 1;
   min-width: 0;
   overflow-x: auto;
@@ -208,7 +206,7 @@ function onCommand(command: string): void {
 
 .app-header__nav-item {
   position: relative;
-  padding: 8px 14px;
+  padding: 9px 14px;
   border: 0;
   background: transparent;
   color: var(--ai-text-2);
@@ -221,18 +219,18 @@ function onCommand(command: string): void {
   &:hover { color: var(--ai-text-1); background: var(--ai-bg-subtle); }
 
   &.is-active {
-    color: #9cc0ff;
+    color: #f4f7fb;
     background: var(--ai-brand-ghost);
 
     &::after {
       content: '';
       position: absolute;
-      left: 14px;
-      right: 14px;
-      bottom: 2px;
+      left: 16px;
+      right: 16px;
+      bottom: 5px;
       height: 2px;
       border-radius: 2px;
-      background: var(--ai-brand);
+      background: linear-gradient(90deg, var(--ai-brand), var(--ai-nev));
     }
   }
 }
@@ -294,13 +292,9 @@ function onCommand(command: string): void {
   white-space: nowrap;
 }
 
-@media (max-width: 1440px) {
-  .app-header__env { display: none; }
-}
-
 @media (max-width: 1280px) {
+  .app-header { padding: 0 var(--ai-space-4); }
   .app-header__inner { gap: var(--ai-space-4); padding: 0 var(--ai-space-4); }
-  .app-header__name em { display: none; }
 }
 
 @media (max-width: 1024px) {
