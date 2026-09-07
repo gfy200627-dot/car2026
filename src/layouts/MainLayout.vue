@@ -18,18 +18,13 @@ import AppHeader from '@/components/layout/AppHeader.vue'
 
 <style scoped lang="scss">
 .main-layout {
-  display: flex;
-  flex-direction: column;
   min-height: 100vh;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 260px),
-    radial-gradient(1100px 560px at 14% -12%, rgba(96, 165, 250, 0.09), transparent 62%),
-    radial-gradient(900px 460px at 92% -8%, rgba(212, 175, 55, 0.07), transparent 58%),
-    var(--ai-bg-base);
+  background: var(--ai-bg-base);
+  color: var(--ai-text-1);
 }
 
 .main-layout__body {
-  flex: 1;
+  width: 100%;
   min-width: 0;
   overflow-x: hidden;
 }
