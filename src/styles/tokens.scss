@@ -1,43 +1,43 @@
 /* ==========================================================================
    AutoInsight Design Tokens
-   设计基调：深色蓝黑底 + 层次面板 + 科技蓝 / 新能源绿 强调色
+   设计基调：墨黑底 + 金属面板 + 电蓝 / 铂金强调色
    所有颜色以 CSS 变量暴露，禁止在业务组件里写裸色值
    ========================================================================== */
 
 :root {
   /* ---------- 层级背景（深色底 + 浅层次，不使用纯黑） ---------- */
-  --ai-bg-base: #0b0f16;        // 应用最底层
-  --ai-bg-page: #0e141d;        // 页面底色
-  --ai-bg-panel: #131a24;       // 面板 / 卡片
-  --ai-bg-elevated: #182130;    // 悬浮 / 弹层
-  --ai-bg-hover: #1d2836;
-  --ai-bg-active: #22303f;
-  --ai-bg-subtle: rgba(255, 255, 255, 0.03);
+  --ai-bg-base: #07090d;        // 应用最底层
+  --ai-bg-page: #0b0e14;        // 页面底色
+  --ai-bg-panel: #10141c;       // 面板 / 卡片
+  --ai-bg-elevated: #151b26;    // 悬浮 / 弹层
+  --ai-bg-hover: #1a2230;
+  --ai-bg-active: #202a39;
+  --ai-bg-subtle: rgba(255, 255, 255, 0.04);
   --ai-bg-mask: rgba(6, 9, 14, 0.72);
 
   /* ---------- 边框 ---------- */
-  --ai-border: rgba(255, 255, 255, 0.08);
-  --ai-border-strong: rgba(255, 255, 255, 0.14);
-  --ai-border-brand: rgba(46, 124, 246, 0.42);
-  --ai-border-dashed: rgba(255, 255, 255, 0.12);
+  --ai-border: rgba(226, 232, 240, 0.08);
+  --ai-border-strong: rgba(226, 232, 240, 0.18);
+  --ai-border-brand: rgba(96, 165, 250, 0.42);
+  --ai-border-dashed: rgba(226, 232, 240, 0.14);
 
   /* ---------- 文本 ---------- */
-  --ai-text-1: #e6edf6;         // 主文本
-  --ai-text-2: #9fb0c6;         // 次级文本
-  --ai-text-3: #6b7c93;         // 弱文本 / 轴标签
-  --ai-text-4: #4b5a6e;         // 占位
-  --ai-text-inverse: #0b0f16;
+  --ai-text-1: #f4f7fb;         // 主文本
+  --ai-text-2: #b8c3d4;         // 次级文本
+  --ai-text-3: #7f8ca3;         // 弱文本 / 轴标签
+  --ai-text-4: #536174;         // 占位
+  --ai-text-inverse: #07090d;
 
   /* ---------- 品牌与强调色 ---------- */
-  --ai-brand: #2e7cf6;          // 科技蓝
-  --ai-brand-hover: #4a8ff8;
-  --ai-brand-active: #246ade;
-  --ai-brand-soft: rgba(46, 124, 246, 0.14);
-  --ai-brand-ghost: rgba(46, 124, 246, 0.08);
+  --ai-brand: #60a5fa;          // 电蓝
+  --ai-brand-hover: #93c5fd;
+  --ai-brand-active: #3b82f6;
+  --ai-brand-soft: rgba(96, 165, 250, 0.15);
+  --ai-brand-ghost: rgba(96, 165, 250, 0.09);
 
-  --ai-nev: #16c79a;            // 新能源绿
-  --ai-nev-soft: rgba(22, 199, 154, 0.14);
-  --ai-warn: #f5a524;           // 警告橙
+  --ai-nev: #d4af37;            // 铂金
+  --ai-nev-soft: rgba(212, 175, 55, 0.14);
+  --ai-warn: #f59e0b;           // 警告金
   --ai-warn-soft: rgba(245, 165, 36, 0.14);
   --ai-danger: #f5544b;         // 危险红
   --ai-danger-soft: rgba(245, 84, 75, 0.14);
@@ -46,11 +46,11 @@
   --ai-cyan: #35c4d8;
 
   /* ---------- 图表色板（顺序即图例顺序） ---------- */
-  --ai-chart-1: #2e7cf6;
-  --ai-chart-2: #16c79a;
-  --ai-chart-3: #f5a524;
-  --ai-chart-4: #9a7bff;
-  --ai-chart-5: #35c4d8;
+  --ai-chart-1: #60a5fa;
+  --ai-chart-2: #d4af37;
+  --ai-chart-3: #22d3ee;
+  --ai-chart-4: #a78bfa;
+  --ai-chart-5: #34d399;
   --ai-chart-6: #f5544b;
   --ai-chart-7: #4fd1c5;
   --ai-chart-8: #8a94ff;
@@ -61,14 +61,14 @@
 
   /* ---------- 语义色 ---------- */
   --ai-up: #f5544b;             // 中国习惯：涨=红
-  --ai-down: #16c79a;           // 跌=绿
+  --ai-down: #34d399;           // 跌=绿
 
   /* ---------- 圆角规范 ---------- */
   --ai-radius-xs: 3px;
   --ai-radius-sm: 6px;
-  --ai-radius-md: 10px;
-  --ai-radius-lg: 14px;
-  --ai-radius-xl: 20px;
+  --ai-radius-md: 8px;
+  --ai-radius-lg: 10px;
+  --ai-radius-xl: 14px;
   --ai-radius-pill: 999px;
 
   /* ---------- 间距系统（4pt） ---------- */
@@ -83,19 +83,19 @@
   --ai-space-12: 48px;
 
   /* ---------- 阴影 ---------- */
-  --ai-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.28);
-  --ai-shadow-md: 0 6px 18px rgba(0, 0, 0, 0.32);
-  --ai-shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.42);
-  --ai-shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  --ai-shadow-glow: 0 0 0 1px rgba(46, 124, 246, 0.28), 0 10px 30px rgba(46, 124, 246, 0.16);
+  --ai-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.34);
+  --ai-shadow-md: 0 14px 34px rgba(0, 0, 0, 0.36);
+  --ai-shadow-lg: 0 24px 70px rgba(0, 0, 0, 0.5);
+  --ai-shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.055);
+  --ai-shadow-glow: 0 0 0 1px rgba(96, 165, 250, 0.22), 0 18px 46px rgba(96, 165, 250, 0.12);
 
   /* ---------- 字体 ---------- */
   --ai-font-sans: 'Inter', 'HarmonyOS Sans SC', 'PingFang SC', 'Microsoft YaHei',
     system-ui, -apple-system, 'Segoe UI', sans-serif;
   --ai-font-mono: 'JetBrains Mono', 'SFMono-Regular', 'Roboto Mono', Consolas, monospace;
 
-  --ai-fs-display: 34px;
-  --ai-fs-h1: 26px;
+  --ai-fs-display: 42px;
+  --ai-fs-h1: 28px;
   --ai-fs-h2: 20px;
   --ai-fs-h3: 16px;
   --ai-fs-body: 14px;
@@ -113,7 +113,7 @@
   --ai-lh-loose: 1.75;
 
   /* ---------- 布局尺寸 ---------- */
-  --ai-header-height: 60px;
+  --ai-header-height: 68px;
   --ai-sidebar-width: 216px;
   --ai-sidebar-collapsed: 64px;
   --ai-content-max: 1680px;
@@ -133,3 +133,4 @@
   --ai-z-modal: 500;
   --ai-z-toast: 600;
 }
+
