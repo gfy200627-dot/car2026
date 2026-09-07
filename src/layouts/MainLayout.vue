@@ -9,14 +9,6 @@
         </transition>
       </router-view>
     </main>
-
-    <footer class="main-layout__footer">
-      <span>AutoInsight · 汽车行业数据智能分析与决策平台</span>
-      <span class="main-layout__divider" />
-      <span>当前为前端示例数据环境，接入后端后自动切换为真实业务数据</span>
-      <span class="main-layout__divider" />
-      <span>数据更新时间：模拟</span>
-    </footer>
   </div>
 </template>
 
@@ -30,8 +22,9 @@ import AppHeader from '@/components/layout/AppHeader.vue'
   flex-direction: column;
   min-height: 100vh;
   background:
-    radial-gradient(1200px 600px at 12% -10%, rgba(46, 124, 246, 0.07), transparent 60%),
-    radial-gradient(1000px 500px at 88% 0%, rgba(22, 199, 154, 0.05), transparent 55%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 260px),
+    radial-gradient(1100px 560px at 14% -12%, rgba(96, 165, 250, 0.09), transparent 62%),
+    radial-gradient(900px 460px at 92% -8%, rgba(212, 175, 55, 0.07), transparent 58%),
     var(--ai-bg-base);
 }
 
@@ -39,24 +32,5 @@ import AppHeader from '@/components/layout/AppHeader.vue'
   flex: 1;
   min-width: 0;
   overflow-x: hidden;
-}
-
-.main-layout__footer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--ai-space-3);
-  padding: var(--ai-space-5) var(--ai-space-6);
-  border-top: 1px solid var(--ai-border);
-  font-size: var(--ai-fs-mini);
-  color: var(--ai-text-4);
-  flex-wrap: wrap;
-  text-align: center;
-}
-
-.main-layout__divider {
-  width: 1px;
-  height: 10px;
-  background: var(--ai-border);
 }
 </style>
