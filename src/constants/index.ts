@@ -20,10 +20,10 @@ export const ENERGY_SHORT: Record<EnergyType, string> = {
 }
 
 export const ENERGY_COLOR: Record<EnergyType, string> = {
-  BEV: '#16c79a',
-  PHEV: '#2e7cf6',
-  HEV: '#9a7bff',
-  ICE: '#f5a524'
+  BEV: '#111111',
+  PHEV: '#5f5f5b',
+  HEV: '#85857f',
+  ICE: '#c2c2bc'
 }
 
 export const ENERGY_OPTIONS: { value: EnergyType; label: string }[] = [

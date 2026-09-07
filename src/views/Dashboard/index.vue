@@ -1,7 +1,8 @@
 <template>
   <div class="ai-page dashboard">
     <section class="dashboard__hero">
-      <div>
+      <img class="dashboard__hero-car" :src="carSideUrl" alt="" aria-hidden="true" />
+      <div class="dashboard__hero-copy">
         <span class="dashboard__eyebrow">01 / MARKET OVERVIEW</span>
         <h1>AUTOMOTIVE<br />INTELLIGENCE</h1>
         <p>从市场数据到车型表现，<br />让汽车行业的变化变得可见。</p>
@@ -77,6 +78,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { Coin, DataLine, Odometer, Refresh, Sunny, Wallet } from '@element-plus/icons-vue'
 import type { EChartsOption } from 'echarts'
+import carSideUrl from '@/assets/intro/car-side.svg'
 import PageHeader from '@/components/common/PageHeader.vue'
 import StatCard from '@/components/common/StatCard.vue'
 import ChartCard from '@/components/common/ChartCard.vue'
@@ -116,11 +118,13 @@ onMounted(() => { if (!store.overview) void store.loadAll(span.value) })
 
 <style scoped lang="scss">
 .dashboard { gap: 24px; }
-.dashboard__hero { display: flex; min-height: 320px; align-items: flex-end; justify-content: space-between; padding: 38px 40px; background: #111; color: #fff; }
+.dashboard__hero { position: relative; display: flex; min-height: 320px; align-items: flex-end; justify-content: space-between; padding: 38px 40px; background: #111; color: #fff; overflow: hidden; }
+.dashboard__hero-car { position: absolute; right: 3%; bottom: 6%; width: min(46%, 560px); opacity: .82; filter: invert(1); pointer-events: none; }
+.dashboard__hero-copy { position: relative; z-index: 1; }
 .dashboard__eyebrow { display: block; color: #b2b2ad; font-family: var(--ai-font-mono); font-size: 10px; letter-spacing: .12em; }
 .dashboard__hero h1 { margin-top: 18px; font-size: clamp(42px, 5vw, 68px); line-height: .94; letter-spacing: -.045em; font-weight: 600; }
 .dashboard__hero p { margin-top: 20px; color: #bfbfba; font-size: 14px; line-height: 1.7; }
-.dashboard__hero-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; font-family: var(--ai-font-mono); }
+.dashboard__hero-meta { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; font-family: var(--ai-font-mono); }
 .dashboard__hero-meta strong { font-size: 20px; font-weight: 500; }
 .dashboard__hero-meta span { color: #9a9a94; font-size: 9px; letter-spacing: .12em; }
 .dashboard__alert { margin: 0; }

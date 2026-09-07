@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { Odometer } from '@element-plus/icons-vue'
 import BaseChart from '@/components/charts/BaseChart.vue'
 import LoadingState from './LoadingState.vue'
@@ -43,11 +43,37 @@ const props = withDefaults(defineProps<{
 }>(), { value: 0, unit: '', change: 0, trend: () => [], tone: 'brand', format: 'int', loading: false })
 
 const iconComponent = computed(() => props.icon ?? Odometer)
+
+/** 数值滚动微动画：600ms 缓出计数 */
+const animated = ref(0)
+let raf = 0
+watch(
+  () => props.value,
+  (target) => {
+    if (props.format === 'text') {
+      animated.value = target
+      return
+    }
+    cancelAnimationFrame(raf)
+    const from = animated.value
+    const start = performance.now()
+    const duration = 600
+    const step = (now: number): void => {
+      const t = Math.min(1, (now - start) / duration)
+      const eased = 1 - Math.pow(1 - t, 3)
+      animated.value = from + (target - from) * eased
+      if (t < 1) raf = requestAnimationFrame(step)
+    }
+    raf = requestAnimationFrame(step)
+  },
+  { immediate: true }
+)
+
 const displayValue = computed(() => {
   if (props.format === 'text') return props.text ?? '--'
-  if (props.format === 'percent') return formatPercent(props.value, 1).replace('%', '')
-  if (props.format === 'price') return formatPrice(props.value, 2).replace('万', '')
-  return formatNumber(props.value)
+  if (props.format === 'percent') return formatPercent(animated.value, 1).replace('%', '')
+  if (props.format === 'price') return formatPrice(animated.value, 2).replace('万', '')
+  return formatNumber(Math.round(animated.value))
 })
 const deltaClass = computed(() => (props.change > 0 ? 'ai-up' : props.change < 0 ? 'ai-down' : ''))
 const arrow = computed(() => (props.change > 0 ? '↑' : props.change < 0 ? '↓' : '—'))

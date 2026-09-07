@@ -179,7 +179,7 @@ export function buildBarOption(input: {
       barGap: '30%',
       stack: s.stack,
       showBackground: input.showBackground ?? false,
-      backgroundStyle: { color: 'rgba(255,255,255,0.03)', borderRadius: 3 },
+      backgroundStyle: { color: '#f1f1ef', borderRadius: 2 },
       itemStyle: {
         borderRadius: horizontal ? [0, 4, 4, 0] : [4, 4, 0, 0],
         color: s.color
@@ -248,9 +248,9 @@ export function buildPieOption(input: {
         roseType: roseType ? 'radius' : undefined,
         avoidLabelOverlap: true,
         itemStyle: {
-          borderColor: 'rgba(11,15,22,0.9)',
+          borderColor: '#ffffff',
           borderWidth: 2,
-          borderRadius: 3
+          borderRadius: 2
         },
         label: input.labelInside
           ? { show: true, position: 'inside', color: '#fff', fontSize: 11, formatter: '{d}%' }
@@ -290,7 +290,7 @@ export function buildRadarOption(input: {
       axisLine: { lineStyle: { color: CHART.axis } },
       splitLine: { lineStyle: { color: CHART.split } },
       splitArea: {
-        areaStyle: { color: ['rgba(255,255,255,0.02)', 'rgba(255,255,255,0.04)'] }
+        areaStyle: { color: ['transparent', 'rgba(17,17,17,0.02)'] }
       }
     },
     series: [
@@ -342,7 +342,7 @@ export function buildMapOption(input: { data: RegionSalesItem[]; unit?: string }
       itemHeight: 80,
       textStyle: { color: CHART.label, fontSize: 10 },
       inRange: {
-        color: ['#12233a', '#17365c', '#1d4f96', '#2e7cf6', '#16c79a']
+        color: ['#ededeb', '#c2c2bc', '#a3a39d', '#70706b', '#111111']
       }
     },
     series: [
@@ -353,13 +353,13 @@ export function buildMapOption(input: { data: RegionSalesItem[]; unit?: string }
         zoom: 1.18,
         center: [104.5, 35.5],
         itemStyle: {
-          areaColor: 'rgba(255,255,255,0.045)',
-          borderColor: 'rgba(255,255,255,0.16)',
-          borderWidth: 0.6
+          areaColor: '#f1f1ef',
+          borderColor: '#ffffff',
+          borderWidth: 0.8
         },
         emphasis: {
           label: { show: true, color: '#fff', fontSize: 11 },
-          itemStyle: { areaColor: withAlpha(PALETTE[0], 0.55), borderColor: '#8ab4ff' }
+          itemStyle: { areaColor: '#111111', borderColor: '#ffffff' }
         },
         select: { disabled: true },
         data: input.data.map((d) => ({ ...d }))
@@ -388,13 +388,13 @@ export function buildGaugeOption(input: {
         center: ['50%', '58%'],
         progress: { show: true, width: 10, itemStyle: { color } },
         axisLine: {
-          lineStyle: { width: 10, color: [[1, 'rgba(255,255,255,0.07)']] }
+          lineStyle: { width: 10, color: [[1, '#ecece9']] }
         },
         axisTick: { distance: -14, length: 4, lineStyle: { color: CHART.axis, width: 1 } },
         splitLine: { distance: -16, length: 8, lineStyle: { color: CHART.axis, width: 1.5 } },
         axisLabel: { distance: 14, color: CHART.label, fontSize: 10 },
         pointer: { icon: 'triangle', width: 8, length: '58%', offsetCenter: [0, '8%'], itemStyle: { color } },
-        anchor: { show: true, size: 10, itemStyle: { color, borderColor: 'rgba(11,15,22,.9)', borderWidth: 2 } },
+        anchor: { show: true, size: 10, itemStyle: { color, borderColor: '#ffffff', borderWidth: 2 } },
         title: { show: true, offsetCenter: [0, '76%'], color: CHART.label, fontSize: 11 },
         detail: {
           valueAnimation: true,
@@ -573,7 +573,7 @@ export function buildProgressRingOption(input: {
         label: { show: false },
         data: [
           { value: input.value, itemStyle: { color } },
-          { value: 100 - input.value, itemStyle: { color: 'rgba(255,255,255,0.06)' } }
+          { value: 100 - input.value, itemStyle: { color: '#ecece9' } }
         ]
       }
     ]

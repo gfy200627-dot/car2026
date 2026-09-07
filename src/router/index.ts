@@ -40,10 +40,16 @@ export const routes: RouteRecordRaw[] = [
         meta: { title: '汽车市场分析', icon: 'DataLine', roles: ['admin', 'analyst'] }
       },
       {
+        path: 'insight',
+        name: 'Insight',
+        component: () => import('@/views/Insight/index.vue'),
+        meta: { title: '行业洞察', icon: 'DataAnalysis', roles: ['admin', 'analyst'] }
+      },
+      {
         path: 'cars',
         name: 'Cars',
         component: () => import('@/views/Cars/index.vue'),
-        meta: { title: '车型中心', icon: 'Grid', roles: ['admin', 'analyst', 'sales', 'user'] }
+        meta: { title: '车型分析', icon: 'Grid', roles: ['admin', 'analyst', 'sales', 'user'] }
       },
       {
         path: 'cars/:id',
@@ -55,7 +61,7 @@ export const routes: RouteRecordRaw[] = [
         path: 'compare',
         name: 'Compare',
         component: () => import('@/views/Compare/index.vue'),
-        meta: { title: '车型对比', icon: 'Operation', roles: ['admin', 'analyst', 'sales', 'user'] }
+        meta: { title: '市场对比', icon: 'Operation', roles: ['admin', 'analyst', 'sales', 'user'] }
       },
       {
         path: 'recommend',

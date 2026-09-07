@@ -481,7 +481,7 @@ onMounted(() => {
 .market__rank-bar {
   height: 5px;
   border-radius: var(--ai-radius-pill);
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--ai-bg-active);
   overflow: hidden;
 
   i {

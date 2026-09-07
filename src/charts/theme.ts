@@ -55,28 +55,28 @@ try {
 export { echarts }
 export type { BarSeriesOption, LineSeriesOption, PieSeriesOption, RadarSeriesOption }
 
-/** 图表色板（与 Design Token 一致） */
+/** 图表色板（UI V2 黑白单色系，与 tokens --ai-chart-* 一致） */
 export const PALETTE = [
-  '#2e7cf6',
-  '#16c79a',
-  '#f5a524',
-  '#9a7bff',
-  '#35c4d8',
-  '#f5544b',
-  '#4fd1c5',
-  '#8a94ff'
+  '#111111',
+  '#5f5f5b',
+  '#85857f',
+  '#a3a39d',
+  '#c2c2bc',
+  '#444440',
+  '#70706b',
+  '#9b9b95'
 ]
 
 export const CHART = {
-  text: '#e6edf6',
-  textSecondary: '#9fb0c6',
-  label: '#6b7c93',
-  axis: 'rgba(255,255,255,0.12)',
-  split: 'rgba(255,255,255,0.06)',
-  tooltipBg: 'rgba(19,26,36,0.96)',
-  tooltipBorder: 'rgba(255,255,255,0.12)',
-  up: '#f5544b',
-  down: '#16c79a'
+  text: '#111111',
+  textSecondary: '#3f3f3c',
+  label: '#7a7a75',
+  axis: '#d7d7d3',
+  split: '#ecece9',
+  tooltipBg: 'rgba(17,17,17,0.96)',
+  tooltipBorder: 'rgba(255,255,255,0.14)',
+  up: '#3f3f3a',
+  down: '#64645f'
 } as const
 
 /** 通用 tooltip */
@@ -85,9 +85,8 @@ export const tooltipBase = {
   borderColor: CHART.tooltipBorder,
   borderWidth: 1,
   padding: [10, 12] as [number, number],
-  textStyle: { color: CHART.text, fontSize: 12 },
-  extraCssText:
-    'box-shadow: 0 10px 30px rgba(0,0,0,.45); border-radius: 8px; backdrop-filter: blur(8px);'
+  textStyle: { color: '#ffffff', fontSize: 12 },
+  extraCssText: 'border-radius: 2px;'
 } as const
 
 /** 通用 legend */
@@ -106,7 +105,7 @@ export const axisBase = {
   axisLine: { lineStyle: { color: CHART.axis } },
   axisTick: { show: false },
   axisLabel: { color: CHART.label, fontSize: 11 },
-  splitLine: { lineStyle: { color: CHART.split, type: 'dashed' as const } }
+  splitLine: { lineStyle: { color: CHART.split } }
 } as const
 
 /** 面积渐变 */

@@ -183,13 +183,18 @@ function onCommand(command: string): void {
 }
 
 .app-header__nav {
-  display: flex;
+  display: none;
   align-items: center;
   gap: 4px;
   flex: 1;
   min-width: 0;
   overflow-x: auto;
   scrollbar-width: none;
+}
+
+/* 侧栏在窄屏隐藏时，顶部导航兜底 */
+@media (max-width: 720px) {
+  .app-header__nav { display: flex; }
 }
 
 .app-header__nav::-webkit-scrollbar { display: none; }
