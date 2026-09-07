@@ -1,12 +1,25 @@
 <template>
   <div class="ai-page dashboard">
+    <section class="dashboard__hero">
+      <div>
+        <span class="dashboard__eyebrow">01 / MARKET OVERVIEW</span>
+        <h1>AUTOMOTIVE<br />INTELLIGENCE</h1>
+        <p>从市场数据到车型表现，<br />让汽车行业的变化变得可见。</p>
+      </div>
+      <div class="dashboard__hero-meta">
+        <strong>2026 Q3</strong>
+        <span>LIVE DATA</span>
+        <span>AutoInsight · Data Platform</span>
+      </div>
+    </section>
+
     <PageHeader
-      title="汽车产业数据驾驶舱"
-      description="覆盖全国汽车销量、新能源渗透、品牌格局与区域分布的实时数据视图"
+      title="市场概览"
+      description="全国汽车销量、新能源渗透、品牌格局与价格结构"
       :updated-at="store.updatedAt"
       :source="store.overview?.source"
       :mock="true"
-      :breadcrumbs="[{ title: '首页' }, { title: '数据驾驶舱' }]"
+      :breadcrumbs="[{ title: '首页' }, { title: '市场概览' }]"
     >
       <template #actions>
         <el-radio-group v-model="span" size="small" @change="store.loadAll(span)">
@@ -14,165 +27,49 @@
           <el-radio-button :value="18">近 18 月</el-radio-button>
           <el-radio-button :value="24">近 24 月</el-radio-button>
         </el-radio-group>
-        <el-button :loading="store.loading" @click="store.loadAll(span)">
-          <el-icon><Refresh /></el-icon>
-          <span style="margin-left: 4px">刷新数据</span>
-        </el-button>
+        <el-button :loading="store.loading" @click="store.loadAll(span)"><el-icon><Refresh /></el-icon><span>刷新数据</span></el-button>
       </template>
     </PageHeader>
 
-    <el-alert
-      v-if="store.error"
-      :title="store.error"
-      type="warning"
-      show-icon
-      :closable="false"
-      class="dashboard__alert"
-    />
+    <el-alert v-if="store.error" :title="store.error" type="warning" show-icon :closable="false" class="dashboard__alert" />
 
-    <!-- 核心指标 -->
-    <section class="ai-cols ai-cols--5 dashboard__metrics">
+    <section class="dashboard__section-head">
+      <div><span class="dashboard__section-kicker">MARKET SNAPSHOT</span><h2>实时市场关键指标</h2></div>
+      <span>DEMO DATA · 2026 Q3</span>
+    </section>
+
+    <section class="ai-cols ai-cols--4 dashboard__metrics">
       <template v-if="store.loading && !store.overview">
-        <div v-for="i in 5" :key="i" class="ai-panel dashboard__metric-skeleton">
-          <LoadingState variant="metric" />
-        </div>
+        <div v-for="i in 4" :key="i" class="ai-panel dashboard__metric-skeleton"><LoadingState variant="metric" /></div>
       </template>
-      <StatCard
-        v-for="(m, i) in metrics"
-        v-else
-        :key="m.key"
-        :label="m.label"
-        :value="m.value"
-        :unit="m.unit"
-        :change="m.change"
-        :trend="m.trend"
-        :tone="m.tone"
-        :hint="m.hint"
-        :format="m.format"
-        :text="m.text"
-        :icon="metricIcons[i]"
-      />
+      <StatCard v-for="m in displayMetrics" v-else :key="m.key" :label="m.label" :value="m.value" :unit="m.unit" :change="m.change" :trend="m.trend" :tone="m.tone" :hint="m.hint" :format="m.format" :text="m.text" />
     </section>
 
-    <!-- 销量趋势 + 渗透率 -->
-    <section class="dashboard__grid">
-      <ChartCard
-        class="span-2"
-        title="全国汽车销量趋势"
-        subtitle="总销量 / 新能源 / 燃油车 月度走势"
-        :option="trendOption"
-        :loading="store.loading"
-        :empty="!store.trend"
-        :height="320"
-        :mock="true"
-        empty-text="暂无销量趋势数据"
-      >
-        <template #extra>
-          <span class="dashboard__legend-hint">单位：辆</span>
-        </template>
+    <section class="dashboard__grid dashboard__grid--hero">
+      <ChartCard class="dashboard__trend" eyebrow="MARKET TREND" title="新能源乘用车销量趋势" subtitle="月度销量与市场结构变化" :option="trendOption" :loading="store.loading" :empty="!store.trend" :height="330" mock>
+        <template #extra><span class="dashboard__chart-note">单位：辆</span></template>
       </ChartCard>
-
-      <ChartCard
-        title="新能源渗透率"
-        subtitle="最近完整月新能源销量占比"
-        :option="penetrationOption"
-        :loading="store.loading"
-        :empty="!penetrationValue"
-        :height="320"
-      />
+      <section class="dashboard__top-models">
+        <div class="dashboard__dark-head"><div><span class="dashboard__eyebrow">TOP MODELS</span><h3>车型关注度排行</h3></div><span>DEMO</span></div>
+        <ol>
+          <li v-for="(item, index) in carData.slice(0, 5)" :key="item.name">
+            <span class="dashboard__rank">0{{ index + 1 }}</span><span class="dashboard__model-name">{{ item.name }}</span><strong>{{ formatRanking(item.value) }}</strong>
+          </li>
+        </ol>
+      </section>
     </section>
 
-    <!-- 地区地图 + 能源结构 -->
-    <section class="dashboard__grid">
-      <ChartCard
-        class="span-2"
-        title="地区销量分布"
-        subtitle="省级行政区销量热力分布（支持缩放与下钻）"
-        :option="mapOption"
-        :loading="store.loading"
-        :empty="!regionData.length"
-        :height="460"
-        flush
-      />
-
-      <ChartCard
-        title="能源类型结构"
-        subtitle="当月各能源类型销量占比"
-        :option="energyOption"
-        :loading="store.loading"
-        :empty="!energyData.length"
-        :height="300"
-      />
+    <section class="dashboard__grid dashboard__grid--secondary">
+      <ChartCard eyebrow="ENERGY MIX" title="动力类型结构" subtitle="当前在售车型结构" :option="energyOption" :loading="store.loading" :empty="!energyData.length" :height="300" />
+      <ChartCard eyebrow="PRICE BAND" title="价格区间分布" subtitle="不同指导价区间销量结构" :loading="store.loading" :empty="!priceData.length" :height="300"><DistributionBarChart :data="priceData" :height="300" /></ChartCard>
     </section>
 
-    <!-- 排行榜与价格分布 -->
-    <section class="dashboard__grid dashboard__grid--3">
-      <ChartCard
-        title="品牌销量 TOP10"
-        subtitle="按最近 12 个月销量排序"
-        :loading="store.loading"
-        :empty="!brandData.length"
-        :height="320"
-      >
-        <BrandRankingChart :data="brandData" :height="320" />
-      </ChartCard>
-
-      <ChartCard
-        title="热门车型 TOP10"
-        subtitle="按年累计销量排序"
-        :loading="store.loading"
-        :empty="!carData.length"
-        :height="320"
-      >
-        <BrandRankingChart :data="carData" :height="320" />
-      </ChartCard>
-
-      <ChartCard
-        title="价格区间分布"
-        subtitle="不同指导价区间的销量结构"
-        :loading="store.loading"
-        :empty="!priceData.length"
-        :height="320"
-      >
-        <DistributionBarChart :data="priceData" :height="320" />
-      </ChartCard>
+    <section class="dashboard__grid dashboard__grid--secondary">
+      <ChartCard eyebrow="BRAND RANKING" title="品牌销量 TOP10" subtitle="按最近 12 个月销量排序" :loading="store.loading" :empty="!brandData.length" :height="320"><BrandRankingChart :data="brandData" :height="320" /></ChartCard>
+      <ChartCard eyebrow="REGION" title="地区销量分布" subtitle="省级行政区销量热力分布" :option="mapOption" :loading="store.loading" :empty="!regionData.length" :height="320" flush />
     </section>
 
-    <!-- 能源对比 + 市场增长 -->
-    <section class="dashboard__grid dashboard__grid--3">
-      <ChartCard
-        class="span-2"
-        title="新能源 / 燃油车销量对比"
-        subtitle="近 12 个月结构对比"
-        :option="energyCompareOption"
-        :loading="store.loading"
-        :empty="!store.trend"
-        :height="300"
-      />
-
-      <ChartCard
-        title="市场增长趋势"
-        subtitle="市场规模与环比增速"
-        :option="growthOption"
-        :loading="store.loading"
-        :empty="!store.growth"
-        :height="300"
-      />
-    </section>
-
-    <!-- 价格—销量散点 -->
-    <section class="dashboard__grid">
-      <ChartCard
-        class="span-3"
-        title="价格—销量分布矩阵"
-        subtitle="气泡大小代表用户评分，横轴为指导价，纵轴为年销量"
-        :loading="store.loading"
-        :empty="!store.scatter.length"
-        :height="340"
-      >
-        <ScatterChart :data="store.scatter" :height="340" />
-      </ChartCard>
-    </section>
+    <section class="dashboard__footer-line">AUTOINSIGHT / DATA PLATFORM <span>Designed for Vue 3 · ECharts · Responsive Desktop</span></section>
   </div>
 </template>
 
@@ -184,196 +81,69 @@ import PageHeader from '@/components/common/PageHeader.vue'
 import StatCard from '@/components/common/StatCard.vue'
 import ChartCard from '@/components/common/ChartCard.vue'
 import LoadingState from '@/components/common/LoadingState.vue'
-import SalesTrendChart from '@/components/charts/SalesTrendChart.vue'
 import BrandRankingChart from '@/components/charts/BrandRankingChart.vue'
-import EnergyPieChart from '@/components/charts/EnergyPieChart.vue'
-import RegionMapChart from '@/components/charts/RegionMapChart.vue'
 import DistributionBarChart from '@/components/charts/DistributionBarChart.vue'
-import ScatterChart from '@/components/charts/ScatterChart.vue'
-import GaugeChart from '@/components/charts/GaugeChart.vue'
 import { useDashboardStore } from '@/stores/dashboard'
-import { buildBarOption, buildGaugeOption, buildLineOption } from '@/charts/builders'
+import { buildGaugeOption, buildLineOption } from '@/charts/builders'
 import { PALETTE } from '@/charts/theme'
-import { ENERGY_COLOR, ENERGY_LABEL } from '@/constants'
+import { ENERGY_COLOR } from '@/constants'
 import type { MetricItem } from '@/types'
+import { formatCompact } from '@/utils/format'
 
 const store = useDashboardStore()
 const span = ref(18)
-
 const metricIcons = [Odometer, Sunny, DataLine, Wallet, Coin]
-
-const metrics = computed<MetricItem[]>(() => store.overview?.metrics ?? [])
+const fallbackMetrics: MetricItem[] = [
+  { key: 'models', label: '在售车型', value: 0, unit: '款', change: 0, trend: [], tone: 'brand', hint: '全市场覆盖', format: 'int' },
+  { key: 'penetration', label: '新能源渗透率', value: 0, unit: '%', change: 0, trend: [], tone: 'nev', hint: '最近完整月', format: 'percent' },
+  { key: 'price', label: '平均指导价', value: 0, unit: '万元', change: 0, trend: [], tone: 'brand', hint: '乘用车市场', format: 'price' },
+  { key: 'attention', label: '同比关注度', value: 0, unit: '%', change: 0, trend: [], tone: 'brand', hint: '示例指标', format: 'percent' }
+]
+const metrics = computed<MetricItem[]>(() => store.overview?.metrics ?? fallbackMetrics)
+const displayMetrics = computed(() => metrics.value.slice(0, 4))
 const regionData = computed(() => store.region?.regions ?? [])
 const energyData = computed(() => store.energy?.proportion ?? [])
 const brandData = computed(() => store.brandRanking)
 const carData = computed(() => store.carRanking)
 const priceData = computed(() => store.price?.buckets ?? [])
-
 const penetrationValue = computed(() => metrics.value.find((m) => m.key === 'penetration')?.value ?? 0)
-
-const trendOption = computed<EChartsOption>(() => {
-  const t = store.trend
-  if (!t) return {}
-  return buildLineOption({
-    x: t.months,
-    valueType: 'compact',
-    series: [
-      { name: '总销量', data: t.total, color: PALETTE[0], area: true },
-      { name: '新能源', data: t.nev, color: PALETTE[1] },
-      { name: '燃油车', data: t.ice, color: PALETTE[2] }
-    ]
-  })
-})
-
-const penetrationOption = computed<EChartsOption>(() =>
-  buildGaugeOption({ value: penetrationValue.value, name: '渗透率', color: PALETTE[1] })
-)
-
-const energyOption = computed<EChartsOption>(() => {
-  const data = energyData.value
-  return {
-    tooltip: { trigger: 'item' },
-    color: [ENERGY_COLOR.BEV, ENERGY_COLOR.PHEV, ENERGY_COLOR.HEV, ENERGY_COLOR.ICE],
-    series: [
-      {
-        type: 'pie',
-        radius: ['52%', '74%'],
-        center: ['50%', '52%'],
-        itemStyle: { borderColor: 'rgba(11,15,22,0.9)', borderWidth: 2, borderRadius: 3 },
-        label: { color: '#9fb0c6', fontSize: 11, formatter: '{b}\n{d}%' },
-        labelLine: { length: 8, length2: 10, lineStyle: { color: 'rgba(255,255,255,0.12)' } },
-        data: data.map((d) => ({ name: d.name, value: d.value }))
-      }
-    ]
-  }
-})
-
-const mapOption = computed<EChartsOption>(() => {
-  const regions = regionData.value
-  const values = regions.map((r) => r.value)
-  const max = Math.max(...values, 1)
-  return {
-    tooltip: {
-      trigger: 'item',
-      backgroundColor: 'rgba(19,26,36,0.96)',
-      borderColor: 'rgba(255,255,255,0.12)',
-      textStyle: { color: '#e6edf6', fontSize: 12 },
-      formatter: (p: unknown) => {
-        const item = p as { name: string; value?: number; data?: { penetration?: number } }
-        return [
-          `<div style="font-weight:600;margin-bottom:4px">${item.name}</div>`,
-          `销量：${Number(item.value ?? 0).toLocaleString('zh-CN')} 辆`,
-          item.data?.penetration ? `渗透率：${item.data.penetration}%` : ''
-        ]
-          .filter(Boolean)
-          .join('<br/>')
-      }
-    },
-    visualMap: {
-      min: Math.min(...values, 0),
-      max,
-      left: 16,
-      bottom: 24,
-      calculable: true,
-      orient: 'vertical',
-      itemWidth: 10,
-      itemHeight: 90,
-      textStyle: { color: '#6b7c93', fontSize: 10 },
-      inRange: { color: ['#12233a', '#17365c', '#1d4f96', '#2e7cf6', '#16c79a'] }
-    },
-    series: [
-      {
-        type: 'map',
-        map: 'china',
-        roam: true,
-        zoom: 1.2,
-        center: [104.5, 35.5],
-        itemStyle: {
-          areaColor: 'rgba(255,255,255,0.045)',
-          borderColor: 'rgba(255,255,255,0.16)',
-          borderWidth: 0.6
-        },
-        emphasis: {
-          label: { show: true, color: '#fff', fontSize: 11 },
-          itemStyle: { areaColor: 'rgba(46,124,246,0.55)' }
-        },
-        data: regions.map((r) => ({ name: r.name, value: r.value, penetration: r.penetration }))
-      }
-    ]
-  }
-})
-
-const energyCompareOption = computed<EChartsOption>(() => {
-  const t = store.trend
-  if (!t) return {}
-  const months = t.months.slice(-12)
-  return buildBarOption({
-    x: months,
-    legend: true,
-    series: [
-      { name: '新能源', data: t.nev.slice(-12), color: PALETTE[1], stack: 'total', barWidth: 18 },
-      { name: '燃油车', data: t.ice.slice(-12), color: PALETTE[2], stack: 'total', barWidth: 18 }
-    ]
-  })
-})
-
-const growthOption = computed<EChartsOption>(() => {
-  const g = store.growth
-  if (!g) return {}
-  return buildLineOption({
-    x: g.months,
-    yName: ['市场规模（亿元）', '环比增速（%）'],
-    series: [
-      { name: '市场规模（亿元）', data: g.marketSize, color: PALETTE[3], area: true, yAxisIndex: 0 },
-      { name: '环比增速（%）', data: g.growth, color: PALETTE[2], yAxisIndex: 1 }
-    ],
-    valueType: 'plain'
-  })
-})
-
-onMounted(() => {
-  if (!store.overview) void store.loadAll(span.value)
-})
+const trendOption = computed<EChartsOption>(() => store.trend ? buildLineOption({ x: store.trend.months, valueType: 'compact', series: [{ name: '新能源', data: store.trend.nev, color: PALETTE[0], area: true }, { name: '总销量', data: store.trend.total, color: PALETTE[2] }] }) : {})
+const energyOption = computed<EChartsOption>(() => ({ tooltip: { trigger: 'item' }, color: [ENERGY_COLOR.BEV, ENERGY_COLOR.PHEV, ENERGY_COLOR.HEV, ENERGY_COLOR.ICE], series: [{ type: 'pie', radius: ['54%', '74%'], center: ['50%', '52%'], itemStyle: { borderColor: '#fff', borderWidth: 2 }, label: { color: '#3f3f3c', fontSize: 11, formatter: '{b}  {d}%' }, data: energyData.value.map((d) => ({ name: d.name, value: d.value })) }] }))
+const mapOption = computed<EChartsOption>(() => ({ tooltip: { trigger: 'item' }, visualMap: { min: 0, max: Math.max(...regionData.value.map((r) => r.value), 1), left: 16, bottom: 18, itemWidth: 10, itemHeight: 70, textStyle: { color: '#777', fontSize: 10 }, inRange: { color: ['#e9e9e6', '#111111'] } }, series: [{ type: 'map', map: 'china', roam: true, zoom: 1.1, center: [104.5, 35.5], itemStyle: { areaColor: '#ededeb', borderColor: '#fff', borderWidth: 1 }, emphasis: { itemStyle: { areaColor: '#111' }, label: { color: '#fff', fontSize: 10 } }, data: regionData.value.map((r) => ({ name: r.name, value: r.value })) }] }))
+function formatRanking(value: number): string { return formatCompact(value) }
+onMounted(() => { if (!store.overview) void store.loadAll(span.value) })
 </script>
 
 <style scoped lang="scss">
-.dashboard__alert {
-  margin-bottom: var(--ai-space-2);
-  background: transparent;
-  border: 1px solid rgba(245, 165, 36, 0.28);
-}
-
-.dashboard__metrics {
-  align-items: stretch;
-}
-
-.dashboard__metric-skeleton {
-  padding: var(--ai-space-4) var(--ai-space-5);
-  min-height: 132px;
-}
-
-.dashboard__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  gap: var(--ai-space-4);
-}
-
-.dashboard__grid--3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.dashboard__grid--3 .span-2 { grid-column: span 2; }
-.span-3 { grid-column: 1 / -1; }
-
-.dashboard__legend-hint {
-  font-size: var(--ai-fs-mini);
-  color: var(--ai-text-4);
-}
-
-@media (max-width: 1280px) {
-  .dashboard__grid,
-  .dashboard__grid--3 {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
+.dashboard { gap: 24px; }
+.dashboard__hero { display: flex; min-height: 320px; align-items: flex-end; justify-content: space-between; padding: 38px 40px; background: #111; color: #fff; }
+.dashboard__eyebrow { display: block; color: #b2b2ad; font-family: var(--ai-font-mono); font-size: 10px; letter-spacing: .12em; }
+.dashboard__hero h1 { margin-top: 18px; font-size: clamp(42px, 5vw, 68px); line-height: .94; letter-spacing: -.045em; font-weight: 600; }
+.dashboard__hero p { margin-top: 20px; color: #bfbfba; font-size: 14px; line-height: 1.7; }
+.dashboard__hero-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; font-family: var(--ai-font-mono); }
+.dashboard__hero-meta strong { font-size: 20px; font-weight: 500; }
+.dashboard__hero-meta span { color: #9a9a94; font-size: 9px; letter-spacing: .12em; }
+.dashboard__alert { margin: 0; }
+.dashboard__section-head { display: flex; align-items: flex-end; justify-content: space-between; padding-top: 4px; }
+.dashboard__section-head h2 { margin-top: 5px; font-size: 22px; font-weight: 600; }
+.dashboard__section-head > span { color: var(--ai-text-4); font-family: var(--ai-font-mono); font-size: 9px; letter-spacing: .1em; }
+.dashboard__section-kicker { color: var(--ai-text-4); font-family: var(--ai-font-mono); font-size: 10px; letter-spacing: .12em; }
+.dashboard__metrics { gap: 16px; }
+.dashboard__metric-skeleton { min-height: 148px; }
+.dashboard__grid { display: grid; min-width: 0; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; }
+.dashboard__grid--secondary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.dashboard__top-models { min-width: 0; min-height: 370px; padding: 24px; background: #111; color: #fff; }
+.dashboard__dark-head { display: flex; align-items: flex-start; justify-content: space-between; }
+.dashboard__dark-head h3 { margin-top: 7px; font-size: 22px; font-weight: 600; }
+.dashboard__dark-head > span { color: #777; font-family: var(--ai-font-mono); font-size: 9px; }
+.dashboard__top-models ol { margin-top: 26px; }
+.dashboard__top-models li { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 14px 0; border-top: 1px solid rgba(255,255,255,.1); }
+.dashboard__rank { color: #777; font-family: var(--ai-font-mono); font-size: 10px; }
+.dashboard__model-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+.dashboard__top-models strong { font-family: var(--ai-font-mono); font-size: 12px; font-weight: 500; }
+.dashboard__chart-note { color: var(--ai-text-4); font-family: var(--ai-font-mono); font-size: 9px; }
+.dashboard__footer-line { display: flex; justify-content: space-between; padding-top: 10px; border-top: 1px solid var(--ai-border); color: var(--ai-text-4); font-family: var(--ai-font-mono); font-size: 9px; letter-spacing: .08em; }
+@media (max-width: 1100px) { .dashboard__hero { min-height: 270px; } .dashboard__grid, .dashboard__grid--secondary { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 768px) { .dashboard__hero { min-height: 250px; padding: 28px 24px; } .dashboard__hero-meta { display: none; } .dashboard__metrics { grid-template-columns: repeat(2, minmax(0,1fr)); } .dashboard__footer-line { flex-direction: column; gap: 6px; } }
+@media (max-width: 520px) { .dashboard__metrics { grid-template-columns: minmax(0,1fr); } .dashboard__hero h1 { font-size: 38px; } }
 </style>
