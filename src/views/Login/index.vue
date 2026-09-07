@@ -207,6 +207,7 @@ const stats = [
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
   gap: 40px;
+  width: min(100%, 1280px);
   max-width: 1280px;
   margin: 0 auto;
   min-height: 100vh;
@@ -219,6 +220,7 @@ const stats = [
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  min-width: 0;
   padding: var(--ai-space-10) 0 var(--ai-space-10) var(--ai-space-10);
   overflow: hidden;
   background: var(--ai-bg-page);
@@ -249,7 +251,9 @@ const stats = [
 .login__visual-content {
   position: relative;
   z-index: 1;
+  width: 100%;
   max-width: 540px;
+  min-width: 0;
   margin-left: auto;
   text-align: left;
 }
@@ -258,9 +262,11 @@ const stats = [
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
 }
 
 .login__logo-mark {
+  flex: 0 0 auto;
   display: grid;
   place-items: center;
   width: 40px;
@@ -276,10 +282,11 @@ const stats = [
 .login__logo-text {
   display: flex;
   flex-direction: column;
+  min-width: 0;
   line-height: 1.25;
 
   b { font-size: 18px; letter-spacing: 0.01em; }
-  em { font-style: normal; font-size: 13px; color: var(--ai-text-4); margin-top: 2px; }
+  em { font-style: normal; font-size: 13px; color: var(--ai-text-4); margin-top: 2px; overflow-wrap: anywhere; }
 }
 
 .login__slogan {
@@ -306,13 +313,19 @@ const stats = [
 
   li {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
+    min-width: 0;
     font-size: 14px;
     color: var(--ai-text-2);
+
+    span {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
   }
 
-  .el-icon { color: var(--ai-brand); font-size: 16px; }
+  .el-icon { flex: 0 0 auto; color: var(--ai-brand); font-size: 16px; }
 }
 
 .login__stats {
@@ -326,11 +339,12 @@ const stats = [
   div {
     display: flex;
     flex-direction: column;
+    min-width: 0;
     gap: 4px;
   }
 
   b { font-size: 22px; color: var(--ai-text-1); font-weight: 600; }
-  span { font-size: var(--ai-fs-sm); color: var(--ai-text-4); }
+  span { font-size: var(--ai-fs-sm); color: var(--ai-text-4); overflow-wrap: anywhere; }
 }
 
 .login__visual-foot {
@@ -346,11 +360,13 @@ const stats = [
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  min-width: 0;
   padding: var(--ai-space-8) var(--ai-space-10) var(--ai-space-8) 0;
 }
 
 .login__card {
   width: 100%;
+  min-width: 0;
   max-width: 440px;
 }
 
@@ -375,11 +391,13 @@ const stats = [
   grid-template-columns: minmax(0, 1fr) 108px;
   gap: var(--ai-space-2);
   width: 100%;
+  min-width: 0;
 }
 
 .login__captcha-img {
   display: grid;
   place-items: center;
+  min-width: 0;
   border: 1px dashed var(--ai-border-dashed);
   border-radius: var(--ai-radius-sm);
   background: var(--ai-bg-subtle);
@@ -397,7 +415,13 @@ const stats = [
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   margin-bottom: var(--ai-space-5);
+
+  .el-checkbox,
+  .el-button {
+    min-width: 0;
+  }
 }
 
 .login__submit {
@@ -419,12 +443,15 @@ const stats = [
   display: flex;
   align-items: center;
   gap: var(--ai-space-2);
+  min-width: 0;
   margin-bottom: 10px;
 }
 
 .login__demo-hint {
+  min-width: 0;
   font-size: var(--ai-fs-xs);
   color: var(--ai-text-4);
+  overflow-wrap: anywhere;
 }
 
 .login__demo-list {
@@ -436,6 +463,7 @@ const stats = [
 .login__demo-item {
   display: flex;
   flex-direction: column;
+  min-width: 0;
   gap: 2px;
   padding: 10px 12px;
   border-radius: var(--ai-radius-sm);
@@ -446,7 +474,7 @@ const stats = [
   transition: all var(--ai-duration-base) var(--ai-ease);
 
   b { font-size: var(--ai-fs-sm); color: var(--ai-text-1); }
-  span { font-size: 12px; color: var(--ai-text-4); }
+  span { font-size: 12px; color: var(--ai-text-4); overflow-wrap: anywhere; }
 
   &:hover {
     border-color: var(--ai-border-brand);
@@ -459,19 +487,74 @@ const stats = [
   font-size: var(--ai-fs-xs);
   color: var(--ai-text-4);
   text-align: center;
+  line-height: 1.6;
 }
 
+/* 1280 以下改为单列登录页，避免左右两栏在常见笔记本宽度下互相挤压 */
 @media (max-width: 1280px) {
   .login {
     grid-template-columns: minmax(0, 1fr);
+    width: 100%;
     max-width: none;
     gap: 0;
   }
   .login__visual { display: none; }
   .login__panel {
+    min-height: 100vh;
     justify-content: center;
-    padding: var(--ai-space-8) var(--ai-space-5);
+    padding: clamp(24px, 5vh, 48px) clamp(20px, 4vw, 48px);
   }
   .login__card { max-width: 420px; }
+}
+
+/* 短屏优先处理，避免 1366×768 / 1280×720 下卡片底部被截断 */
+@media (max-height: 820px) and (min-width: 769px) {
+  .login__panel {
+    align-items: flex-start;
+    min-height: 100vh;
+    padding-top: 32px;
+    padding-bottom: 32px;
+    overflow-y: auto;
+  }
+
+  .login__card-head { margin-bottom: 18px; }
+  .login__demo { margin-top: 18px; }
+  .login__foot { margin-top: 14px; }
+}
+
+@media (max-width: 600px) {
+  .login__panel {
+    min-height: 100dvh;
+    padding: 24px 16px;
+  }
+
+  .login__card-head {
+    margin-bottom: 20px;
+
+    h2 { font-size: 26px; }
+    p { font-size: 13px; }
+  }
+
+  .login__captcha {
+    grid-template-columns: minmax(0, 1fr) 96px;
+  }
+
+  .login__row {
+    align-items: flex-start;
+  }
+
+  .login__demo {
+    padding: 12px;
+  }
+
+  .login__demo-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 380px) {
+  .login__panel { padding-inline: 12px; }
+  .login__captcha { grid-template-columns: minmax(0, 1fr) 88px; }
+  .login__row { flex-wrap: wrap; }
 }
 </style>
