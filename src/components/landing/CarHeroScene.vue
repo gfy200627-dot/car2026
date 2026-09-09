@@ -148,12 +148,12 @@ function animate(now: number) {
   camera.position.copy(rearCamera).lerp(frontCamera, reveal)
 
   if (car) {
-    // 落位：画面右半、整车完整入画，结尾以车头 3/4 视角正对镜头方向
+    // 落位：车体整体在标题右侧、车头朝画面右外（侧前 3/4），完整入画
     const launch = in3(clamp((t - 3400) / 1400))
-    car.position.x = 1.65 + launch * 2.05
+    car.position.x = 1.65 + launch * 2.85
     car.position.y = 0.08
     car.position.z = launch * 3.4
-    car.rotation.y = -0.3 + Math.PI * reveal
+    car.rotation.y = 0.35 + 1.55 * reveal
   }
 
   headlightsOn(out(clamp((t - 2400) / 500)))
