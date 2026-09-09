@@ -10,6 +10,7 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 
 const props = withDefaults(defineProps<{ modelUrl?: string; autoPlay?: boolean }>(), {
   modelUrl: '/models/aventador_svj_black-ghosttm-web-optimized.glb',
@@ -84,8 +85,16 @@ function makeStreaks() {
 
 function load() {
   if (!scene) return
-  new GLTFLoader().load(props.modelUrl, (gltf) => {
-    if (disposed || !scene) return
+  // 模型是 Draco 压缩的 GLB，必须挂 DRACOLoader 才能解析（解码器自托管在 /draco/）
+  const draco = new DRACOLoader()
+  draco.setDecoderPath('/draco/')
+  const loader = new GLTFLoader()
+  loader.setDRACOLoader(draco)
+  loader.load(props.modelUrl, (gltf) => {
+    if (disposed || !scene) {
+      draco.dispose()
+      return
+    }
     loading.value = false
     car = gltf.scene
     const box = new THREE.Box3().setFromObject(car)
@@ -116,6 +125,7 @@ function load() {
     headlights.forEach(x => car?.add(x))
     scene.add(car)
     startedAt = performance.now()
+    draco.dispose()
   }, undefined, () => { loading.value = false })
 }
 
