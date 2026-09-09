@@ -1,6 +1,5 @@
 <template>
   <div ref="host" class="car-hero-scene" aria-hidden="true">
-    <div ref="flash" class="car-hero-scene__flash" />
     <div class="car-hero-scene__vignette" />
     <div v-if="loading" class="car-hero-scene__loading">LOADING VEHICLE</div>
   </div>
@@ -18,7 +17,6 @@ const props = withDefaults(defineProps<{ modelUrl?: string; autoPlay?: boolean }
 })
 
 const host = ref<HTMLDivElement | null>(null)
-const flash = ref<HTMLDivElement | null>(null)
 const loading = ref(true)
 let renderer: THREE.WebGLRenderer | null = null
 let scene: THREE.Scene | null = null
@@ -32,7 +30,7 @@ let startedAt = 0
 let headlights: THREE.PointLight[] = []
 
 const rearCamera = new THREE.Vector3(5.4, 1.75, -8.4)
-const frontCamera = new THREE.Vector3(4.8, 1.62, 8.0)
+const frontCamera = new THREE.Vector3(5.2, 1.05, 8.6)
 const target = new THREE.Vector3(1.55, 0.05, 0)
 const clamp = (v: number) => Math.min(1, Math.max(0, v))
 const smooth = (t: number) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
@@ -99,7 +97,7 @@ function load() {
     car = gltf.scene
     const box = new THREE.Box3().setFromObject(car)
     const size = box.getSize(new THREE.Vector3())
-    car.scale.setScalar(3.55 / Math.max(size.x, size.y, size.z))
+    car.scale.setScalar(4.1 / Math.max(size.x, size.y, size.z))
     const centered = new THREE.Box3().setFromObject(car).getCenter(new THREE.Vector3())
     car.position.sub(centered)
     car.position.set(1.65, 0.08, 0)
@@ -150,18 +148,18 @@ function animate(now: number) {
   camera.position.copy(rearCamera).lerp(frontCamera, reveal)
 
   if (car) {
-    // 落位在 Hero 右半、与标题错开：launch 把车推离原点后停在右侧远景
+    // 落位：画面右半、整车完整入画，结尾以车头 3/4 视角正对镜头方向
     const launch = in3(clamp((t - 3400) / 1400))
-    car.position.x = 1.65 + launch * 2.55
+    car.position.x = 1.65 + launch * 2.05
     car.position.y = 0.08
-    car.position.z = launch * 2.0
-    car.rotation.y = Math.PI * (1 - reveal)
+    car.position.z = launch * 3.4
+    car.rotation.y = -0.3 + Math.PI * reveal
   }
 
   headlightsOn(out(clamp((t - 2400) / 500)))
   const launch = clamp((t - 3400) / 1400)
-  camera.position.z += launch * 0.6
-  camera.fov = 30 + launch * 8
+  camera.position.z -= launch * 1.6
+  camera.fov = 30 + launch * 2
   camera.lookAt(target)
   camera.updateProjectionMatrix()
 
@@ -177,11 +175,6 @@ function animate(now: number) {
     pos.needsUpdate = true
   }
 
-  if (flash.value) {
-    const a = clamp((t - 4470) / 80)
-    const b = clamp((t - 4550) / 360)
-    flash.value.style.opacity = String(Math.max(0, a * (1 - b)))
-  }
   renderer.render(scene, camera)
 }
 
@@ -227,6 +220,5 @@ onBeforeUnmount(() => {
 .car-hero-scene { position:absolute; inset:0; overflow:hidden; pointer-events:none; background:radial-gradient(circle at 70% 48%, rgba(51,101,154,.15), transparent 27%), radial-gradient(circle at 62% 100%, rgba(255,255,255,.05), transparent 38%); }
 .car-hero-scene :deep(canvas) { position:absolute; inset:0; width:100%; height:100%; }
 .car-hero-scene__vignette { position:absolute; inset:0; background:radial-gradient(circle at 70% 48%, transparent 38%, rgba(0,0,0,.68) 100%); }
-.car-hero-scene__flash { position:absolute; inset:-10%; z-index:5; background:#fff; opacity:0; mix-blend-mode:screen; }
 .car-hero-scene__loading { position:absolute; right:34px; bottom:28px; z-index:4; color:rgba(255,255,255,.42); font:9px/1 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.18em; }
 </style>
