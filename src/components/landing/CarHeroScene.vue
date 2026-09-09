@@ -150,18 +150,18 @@ function animate(now: number) {
   camera.position.copy(rearCamera).lerp(frontCamera, reveal)
 
   if (car) {
-    // Fixed in the right half of the Hero, beside the title.
+    // 落位在 Hero 右半、与标题错开：launch 把车推离原点后停在右侧远景
     const launch = in3(clamp((t - 3400) / 1400))
-    car.position.x = 1.65
+    car.position.x = 1.65 + launch * 2.55
     car.position.y = 0.08
-    car.position.z = launch * 5.8
+    car.position.z = launch * 2.0
     car.rotation.y = Math.PI * (1 - reveal)
   }
 
   headlightsOn(out(clamp((t - 2400) / 500)))
   const launch = clamp((t - 3400) / 1400)
-  camera.position.z += launch * 1.4
-  camera.fov = 30 + launch * 11
+  camera.position.z += launch * 0.6
+  camera.fov = 30 + launch * 8
   camera.lookAt(target)
   camera.updateProjectionMatrix()
 
