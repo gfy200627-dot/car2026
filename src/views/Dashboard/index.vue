@@ -1,7 +1,7 @@
 <template>
   <div class="ai-page dashboard">
     <section class="dashboard__hero">
-      <img class="dashboard__hero-car" :src="carSideUrl" alt="" aria-hidden="true" />
+      <CarHeroScene />
       <div class="dashboard__hero-copy">
         <span class="dashboard__eyebrow">01 / MARKET OVERVIEW</span>
         <h1>AUTOMOTIVE<br />INTELLIGENCE</h1>
@@ -36,7 +36,7 @@
 
     <section class="dashboard__section-head">
       <div><span class="dashboard__section-kicker">MARKET SNAPSHOT</span><h2>实时市场关键指标</h2></div>
-      <span>DEMO DATA · 2026 Q3</span>
+      <span>LIVE DATA · 2026 Q3</span>
     </section>
 
     <section class="ai-cols ai-cols--4 dashboard__metrics">
@@ -51,7 +51,7 @@
         <template #extra><span class="dashboard__chart-note">单位：辆</span></template>
       </ChartCard>
       <section class="dashboard__top-models">
-        <div class="dashboard__dark-head"><div><span class="dashboard__eyebrow">TOP MODELS</span><h3>车型关注度排行</h3></div><span>DEMO</span></div>
+        <div class="dashboard__dark-head"><div><span class="dashboard__eyebrow">TOP MODELS</span><h3>车型关注度排行</h3></div><span>LIVE</span></div>
         <ol>
           <li v-for="(item, index) in carData.slice(0, 5)" :key="item.name">
             <span class="dashboard__rank">0{{ index + 1 }}</span><span class="dashboard__model-name">{{ item.name }}</span><strong>{{ formatRanking(item.value) }}</strong>
@@ -70,23 +70,23 @@
       <ChartCard eyebrow="REGION" title="地区销量分布" subtitle="省级行政区销量热力分布" :option="mapOption" :loading="store.loading" :empty="!regionData.length" :height="320" flush />
     </section>
 
-    <section class="dashboard__footer-line">AUTOINSIGHT / DATA PLATFORM <span>Designed for Vue 3 · ECharts · Responsive Desktop</span></section>
+    <section class="dashboard__footer-line">AUTOINSIGHT / DATA PLATFORM <span>Vue 3 · Three.js · ECharts · Responsive Desktop</span></section>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { Coin, DataLine, Odometer, Refresh, Sunny, Wallet } from '@element-plus/icons-vue'
+import { DataLine, Odometer, Refresh, Sunny, Wallet, Coin } from '@element-plus/icons-vue'
 import type { EChartsOption } from 'echarts'
-import carSideUrl from '@/assets/intro/car-side.svg'
 import PageHeader from '@/components/common/PageHeader.vue'
 import StatCard from '@/components/common/StatCard.vue'
 import ChartCard from '@/components/common/ChartCard.vue'
 import LoadingState from '@/components/common/LoadingState.vue'
 import BrandRankingChart from '@/components/charts/BrandRankingChart.vue'
 import DistributionBarChart from '@/components/charts/DistributionBarChart.vue'
+import CarHeroScene from '@/components/landing/CarHeroScene.vue'
 import { useDashboardStore } from '@/stores/dashboard'
-import { buildGaugeOption, buildLineOption } from '@/charts/builders'
+import { buildLineOption } from '@/charts/builders'
 import { PALETTE } from '@/charts/theme'
 import { ENERGY_COLOR } from '@/constants'
 import type { MetricItem } from '@/types'
@@ -99,7 +99,7 @@ const fallbackMetrics: MetricItem[] = [
   { key: 'models', label: '在售车型', value: 0, unit: '款', change: 0, trend: [], tone: 'brand', hint: '全市场覆盖', format: 'int' },
   { key: 'penetration', label: '新能源渗透率', value: 0, unit: '%', change: 0, trend: [], tone: 'nev', hint: '最近完整月', format: 'percent' },
   { key: 'price', label: '平均指导价', value: 0, unit: '万元', change: 0, trend: [], tone: 'brand', hint: '乘用车市场', format: 'price' },
-  { key: 'attention', label: '同比关注度', value: 0, unit: '%', change: 0, trend: [], tone: 'brand', hint: '示例指标', format: 'percent' }
+  { key: 'attention', label: '同比关注度', value: 0, unit: '%', change: 0, trend: [], tone: 'brand', hint: '市场关注', format: 'percent' }
 ]
 const metrics = computed<MetricItem[]>(() => store.overview?.metrics ?? fallbackMetrics)
 const displayMetrics = computed(() => metrics.value.slice(0, 4))
@@ -108,7 +108,6 @@ const energyData = computed(() => store.energy?.proportion ?? [])
 const brandData = computed(() => store.brandRanking)
 const carData = computed(() => store.carRanking)
 const priceData = computed(() => store.price?.buckets ?? [])
-const penetrationValue = computed(() => metrics.value.find((m) => m.key === 'penetration')?.value ?? 0)
 const trendOption = computed<EChartsOption>(() => store.trend ? buildLineOption({ x: store.trend.months, valueType: 'compact', series: [{ name: '新能源', data: store.trend.nev, color: PALETTE[0], area: true }, { name: '总销量', data: store.trend.total, color: PALETTE[2] }] }) : {})
 const energyOption = computed<EChartsOption>(() => ({ tooltip: { trigger: 'item' }, color: [ENERGY_COLOR.BEV, ENERGY_COLOR.PHEV, ENERGY_COLOR.HEV, ENERGY_COLOR.ICE], series: [{ type: 'pie', radius: ['54%', '74%'], center: ['50%', '52%'], itemStyle: { borderColor: '#fff', borderWidth: 2 }, label: { color: '#3f3f3c', fontSize: 11, formatter: '{b}  {d}%' }, data: energyData.value.map((d) => ({ name: d.name, value: d.value })) }] }))
 const mapOption = computed<EChartsOption>(() => ({ tooltip: { trigger: 'item' }, visualMap: { min: 0, max: Math.max(...regionData.value.map((r) => r.value), 1), left: 16, bottom: 18, itemWidth: 10, itemHeight: 70, textStyle: { color: '#777', fontSize: 10 }, inRange: { color: ['#e9e9e6', '#111111'] } }, series: [{ type: 'map', map: 'china', roam: true, zoom: 1.1, center: [104.5, 35.5], itemStyle: { areaColor: '#ededeb', borderColor: '#fff', borderWidth: 1 }, emphasis: { itemStyle: { areaColor: '#111' }, label: { color: '#fff', fontSize: 10 } }, data: regionData.value.map((r) => ({ name: r.name, value: r.value })) }] }))
@@ -118,15 +117,15 @@ onMounted(() => { if (!store.overview) void store.loadAll(span.value) })
 
 <style scoped lang="scss">
 .dashboard { gap: 24px; }
-.dashboard__hero { position: relative; display: flex; min-height: 320px; align-items: flex-end; justify-content: space-between; padding: 38px 40px; background: #111; color: #fff; overflow: hidden; }
-.dashboard__hero-car { position: absolute; right: 3%; bottom: 6%; width: min(46%, 560px); opacity: .82; filter: invert(1); pointer-events: none; }
-.dashboard__hero-copy { position: relative; z-index: 1; }
-.dashboard__eyebrow { display: block; color: #b2b2ad; font-family: var(--ai-font-mono); font-size: 10px; letter-spacing: .12em; }
-.dashboard__hero h1 { margin-top: 18px; font-size: clamp(42px, 5vw, 68px); line-height: .94; letter-spacing: -.045em; font-weight: 600; }
-.dashboard__hero p { margin-top: 20px; color: #bfbfba; font-size: 14px; line-height: 1.7; }
-.dashboard__hero-meta { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; font-family: var(--ai-font-mono); }
+.dashboard__hero { position: relative; display: flex; min-height: 430px; align-items: flex-end; justify-content: space-between; padding: 42px 44px; background: #06090d; color: #fff; overflow: hidden; isolation: isolate; }
+.dashboard__hero::after { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(4,7,10,.9) 0%, rgba(4,7,10,.38) 42%, rgba(4,7,10,.05) 72%), linear-gradient(0deg, rgba(4,7,10,.72), transparent 42%); pointer-events: none; }
+.dashboard__hero-copy { position: relative; z-index: 2; max-width: 650px; }
+.dashboard__eyebrow { display: block; color: #aab4c0; font-family: var(--ai-font-mono); font-size: 10px; letter-spacing: .12em; }
+.dashboard__hero h1 { margin-top: 18px; font-size: clamp(44px, 5vw, 72px); line-height: .92; letter-spacing: -.045em; font-weight: 600; }
+.dashboard__hero p { margin-top: 22px; color: #c3ccd6; font-size: 14px; line-height: 1.7; }
+.dashboard__hero-meta { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; font-family: var(--ai-font-mono); }
 .dashboard__hero-meta strong { font-size: 20px; font-weight: 500; }
-.dashboard__hero-meta span { color: #9a9a94; font-size: 9px; letter-spacing: .12em; }
+.dashboard__hero-meta span { color: #8f9aa7; font-size: 9px; letter-spacing: .12em; }
 .dashboard__alert { margin: 0; }
 .dashboard__section-head { display: flex; align-items: flex-end; justify-content: space-between; padding-top: 4px; }
 .dashboard__section-head h2 { margin-top: 5px; font-size: 22px; font-weight: 600; }
@@ -147,7 +146,7 @@ onMounted(() => { if (!store.overview) void store.loadAll(span.value) })
 .dashboard__top-models strong { font-family: var(--ai-font-mono); font-size: 12px; font-weight: 500; }
 .dashboard__chart-note { color: var(--ai-text-4); font-family: var(--ai-font-mono); font-size: 9px; }
 .dashboard__footer-line { display: flex; justify-content: space-between; padding-top: 10px; border-top: 1px solid var(--ai-border); color: var(--ai-text-4); font-family: var(--ai-font-mono); font-size: 9px; letter-spacing: .08em; }
-@media (max-width: 1100px) { .dashboard__hero { min-height: 270px; } .dashboard__grid, .dashboard__grid--secondary { grid-template-columns: minmax(0, 1fr); } }
-@media (max-width: 768px) { .dashboard__hero { min-height: 250px; padding: 28px 24px; } .dashboard__hero-meta { display: none; } .dashboard__metrics { grid-template-columns: repeat(2, minmax(0,1fr)); } .dashboard__footer-line { flex-direction: column; gap: 6px; } }
-@media (max-width: 520px) { .dashboard__metrics { grid-template-columns: minmax(0,1fr); } .dashboard__hero h1 { font-size: 38px; } }
+@media (max-width: 1100px) { .dashboard__hero { min-height: 360px; } .dashboard__grid, .dashboard__grid--secondary { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 768px) { .dashboard__hero { min-height: 330px; padding: 28px 24px; } .dashboard__hero-meta { display: none; } .dashboard__metrics { grid-template-columns: repeat(2, minmax(0,1fr)); } .dashboard__footer-line { flex-direction: column; gap: 6px; } }
+@media (max-width: 520px) { .dashboard__metrics { grid-template-columns: minmax(0,1fr); } .dashboard__hero { min-height: 300px; } .dashboard__hero h1 { font-size: 38px; } }
 </style>
