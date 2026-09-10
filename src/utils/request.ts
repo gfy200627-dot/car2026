@@ -19,7 +19,8 @@ export const USE_MOCK = import.meta.env.DEV && import.meta.env.VITE_USE_MOCK !==
 
 const http = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
-  timeout: 15_000,
+  // Render Free 冷启动可能明显超过普通 API 的响应时间，避免 15 秒误判超时。
+  timeout: 60_000,
   headers: { 'Content-Type': 'application/json' }
 })
 
@@ -111,16 +112,38 @@ export interface RequestOptions extends AxiosRequestConfig {
   silent?: boolean
 }
 
+const RETRYABLE_GET_CODES = new Set([-1, -2])
+const RETRY_DELAY_MS = 1_500
+
+function isRetryableGet(options: RequestOptions, error: unknown): error is ApiError {
+  return options.method?.toLowerCase() === 'get' && error instanceof ApiError &&
+    (RETRYABLE_GET_CODES.has(error.code) || error.code >= 500)
+}
+
+function wait(ms: number) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms))
+}
+
 export async function request<T>(options: RequestOptions): Promise<T> {
   const { silent, ...rest } = options
-  try {
-    return (await http.request(rest)) as T
-  } catch (err) {
-    if (!silent && err instanceof ApiError) {
-      ElMessage.error(err.message)
+  const maxRetries = rest.method?.toLowerCase() === 'get' ? 1 : 0
+
+  for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
+    try {
+      return (await http.request(rest)) as T
+    } catch (err) {
+      if (attempt < maxRetries && isRetryableGet(rest, err)) {
+        await wait(RETRY_DELAY_MS)
+        continue
+      }
+      if (!silent && err instanceof ApiError) {
+        ElMessage.error(err.message)
+      }
+      throw err
     }
-    throw err
   }
+
+  throw new ApiError(-2, '网络异常，请检查后端服务是否已启动')
 }
 
 export function get<T>(url: string, params?: Record<string, unknown>, options?: RequestOptions): Promise<T> {
