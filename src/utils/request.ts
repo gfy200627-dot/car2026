@@ -11,8 +11,11 @@ import { getToken, clearAuth } from './auth'
  * - 业务错误码统一转换为 ApiError，401 自动登出并跳转登录页
  */
 
-/** 是否启用 Mock（默认开启，设置 VITE_USE_MOCK=false 后走真实后端） */
-export const USE_MOCK = import.meta.env.VITE_USE_MOCK !== 'false'
+/**
+ * Mock 仅允许在 Vite 开发环境启用。
+ * 生产构建（包括 Vercel）无论环境变量如何设置，都强制走真实后端。
+ */
+export const USE_MOCK = import.meta.env.DEV && import.meta.env.VITE_USE_MOCK !== 'false'
 
 const http = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
@@ -21,7 +24,7 @@ const http = axios.create({
 })
 
 if (USE_MOCK) {
-  // 注入 Mock 适配器：对业务层完全透明
+  // 仅开发环境注入 Mock 适配器，生产环境永远使用真实 HTTP 请求。
   http.defaults.adapter = mockAdapter
 }
 
